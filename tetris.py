@@ -111,13 +111,13 @@ class T_Tetramino(Tetramino):
     """ Implementation of the J Tetramino """
     piece_grid_rows = 3
     piece_grid_cols = 3
-    piece_orientations = 2
+    piece_orientations = 4
 
     def __init__(self, position=Position(0,0)):
         Tetramino.__init__(self, position)
         # orientation 0
-        self.orientations_grid[0][0][:] = ['.','.','o']
-        self.orientations_grid[0][1][:] = ['o','o','o']
+        self.orientations_grid[0][0][:] = ['.','m','.']
+        self.orientations_grid[0][1][:] = ['m','m','m']
         self.piece_grid = self.rotate(self.orientation)
 
 
@@ -212,6 +212,7 @@ class Controller(object):
                         'L': self.model.add_tetramino,
                         'O': self.model.add_tetramino,
                         'S': self.model.add_tetramino,
+                        'T': self.model.add_tetramino,
                         'Z': self.model.add_tetramino,
                         't': self.model.test_tetramino}
 
@@ -224,6 +225,8 @@ class Controller(object):
             self.options[keystroke](L_Tetramino())
         elif keystroke == 'O':
             self.options[keystroke](O_Tetramino())
+        elif keystroke == 'T':
+            self.options[keystroke](T_Tetramino())
         elif keystroke == 'Z':
             self.options[keystroke](Z_Tetramino())
         elif keystroke == 'S':
