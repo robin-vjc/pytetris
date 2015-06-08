@@ -14,7 +14,6 @@ class Tetramino(object):
         self.position = position
         self.orientation = 0
         # orientations_grid[orientation][row][column]
-        # TODO np.char.capitalize(self.orientations_grid)
         self.orientations_grid = np.empty((self.PIECE_ORIENTATIONS,\
                                            self.PIECE_GRID_ROWS,\
                                            self.PIECE_GRID_COLS), dtype=str)
@@ -43,7 +42,7 @@ class I_Tetramino(Tetramino):
     PIECE_GRID_COLS = 4
     PIECE_ORIENTATIONS = 4
 
-    def __init__(self, position=Position(0,0)):
+    def __init__(self, position=Position(0,3)):
         Tetramino.__init__(self, position)
         # orientations
         self.orientations_grid[0,1,:] = ['c','c','c','c']
@@ -70,7 +69,7 @@ class Z_Tetramino(Tetramino):
     PIECE_GRID_COLS = 3
     PIECE_ORIENTATIONS = 4
 
-    def __init__(self, position=Position(0,0)):
+    def __init__(self, position=Position(0,3)):
         Tetramino.__init__(self, position)
         # orientations
         self.orientations_grid[0,:,:] = [['r','r','.'],['.','r','r'],['.','.','.']]
@@ -85,7 +84,7 @@ class S_Tetramino(Tetramino):
     PIECE_GRID_COLS = 3
     PIECE_ORIENTATIONS = 4
 
-    def __init__(self, position=Position(0,0)):
+    def __init__(self, position=Position(0,3)):
         Tetramino.__init__(self, position)
         # orientations
         self.orientations_grid[0,:,:] = [['.','g','g'],['g','g','.'],['.','.','.']]
@@ -130,7 +129,7 @@ class T_Tetramino(Tetramino):
     PIECE_GRID_COLS = 3
     PIECE_ORIENTATIONS = 4
 
-    def __init__(self, position=Position(0,0)):
+    def __init__(self, position=Position(0,3)):
         Tetramino.__init__(self, position)
         # orientation 0
         self.orientations_grid[0,:,:] = [['.','m','.'],['m','m','m'],['.','.','.']]

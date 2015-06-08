@@ -149,15 +149,21 @@ def main():
     viewer = Viewer(model)
     controller = Controller(model, viewer)
 
-    # viewer.displayGrid()
     while True:
         keystrokes = raw_input('')
-        #for keystroke_cluster in keystrokes.split(' '):
-        #    for keystroke in list(keystroke_cluster):
-        for keystroke in keystrokes.split(' '):
-            controller.exec_command(keystroke)
-
-    # controller.execCommand('p')
+        # commands are separated by either: newline, blank space,
+        # or nothing (and have to be parsed); the following logic
+        # finds commands that start with '?' and parses them; regexp
+        # here may be better
+        for keystroke_cluster in keystrokes.split(' '):
+            i = 0
+            while i < keystroke_cluster.__len__():
+                if keystroke_cluster[i] == '?':
+                    controller.exec_command(keystroke_cluster[i:i+2])
+                    i += 1
+                else:
+                    controller.exec_command(keystroke_cluster[i])
+                i += 1
 
 if __name__=='__main__':
     main()
