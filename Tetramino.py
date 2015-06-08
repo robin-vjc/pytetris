@@ -27,13 +27,15 @@ class Tetramino(object):
     def test_tetramino(self):
         self.display_piece_grid()
 
+    # rotate method is in Tetramino, NOT in model, because it modifies
+    # the Tetramino itself (and not the main grid)
     def rotate_right(self):
         if self.orientation < self.PIECE_ORIENTATIONS-1:
             self.orientation += 1
         else:
             self.orientation = 0
         self.piece_grid = self.orientations_grid[self.orientation,:,:]
-        # return self.piece_grid
+        return self
 
 class I_Tetramino(Tetramino):
     """ Implementation of the I Tetramino

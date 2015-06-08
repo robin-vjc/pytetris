@@ -1,3 +1,4 @@
+from cvxpy.atoms.elementwise.pos import pos
 from Tetramino import *
 
 Position = namedtuple('Position', ['row','col'])
@@ -24,17 +25,58 @@ class Model(object):
         # insert tetramino in the active grid at the initiation position
         self.move_active_tetramino(tetramino.position)
 
+    def check_wall_collision(self, position, tetramino):
+        """ returns True if given position is within walls (OK), False otherwise """
+        blocks_row, blocks_col = np.where(tetramino.piece_grid != '.')
+        if (position.col+blocks_col.min() >= 0) \
+                and (position.col+blocks_col.max() <= self.gridColumns) \
+                and (position.row+blocks_row.max() <= self.gridRows):
+            return True
+        else:
+            return False
+
     def move_active_tetramino(self, position):
         """ move the active tetramino at the given position """
+        # check if wall collision, don't do anything if it fails
+        if self.check_wall_collision(position, self.active_tetramino):
+            self.active_tetramino.position = position
+            self.update_active_grid()
+        else:
+            pass
+
+    def update_active_grid(self):
         t_rows = self.active_tetramino.piece_grid.shape[0]
         t_cols = self.active_tetramino.piece_grid.shape[1]
-        # clear active grid first, then move
+        position = self.active_tetramino.position
+        # clear active grid first, then replace
         self.active_grid[:,:] = '.'
-        # TODO here there should be more logic to see if you can actually move it or not
-        self.active_grid[position.row:position.row+t_rows, position.col:position.col+t_cols] = np.char.capitalize(self.active_tetramino.piece_grid)
+        self.active_grid[position.row:position.row+t_rows, position.col:position.col+t_cols]\
+                = np.char.capitalize(self.active_tetramino.piece_grid)
+
+    def move_left(self):
+        """ move active tetramino one step to the left """
+        old_column = self.active_tetramino.position.col
+        new_position = self.active_tetramino.position._replace(col=old_column-1)
+        self.move_active_tetramino(new_position)
+
+    def move_right(self):
+        """ move active tetramino one step to the right """
+        old_column = self.active_tetramino.position.col
+        new_position = self.active_tetramino.position._replace(col=old_column+1)
+        self.move_active_tetramino(new_position)
+
+    def move_downward(self):
+        """ move active tetramino one step to the right """
+        old_row = self.active_tetramino.position.row
+        new_position = self.active_tetramino.position._replace(row=old_row+1)
+        self.move_active_tetramino(new_position)
 
     def rotate_right(self):
+        # here it should be checked whether the rotation is OK
+        # if it is OK rotate
+        # otherwise pass
         self.active_tetramino.rotate_right()
+        self.update_active_grid()
 
     def test_tetramino(self):
         self.active_tetramino.test_tetramino()
@@ -123,6 +165,9 @@ class Controller(object):
                         'T': self.model.add_tetramino,
                         'Z': self.model.add_tetramino,
                         ')': self.model.rotate_right,
+                        '<': self.model.move_left,
+                        '>': self.model.move_right,
+                        'v': self.model.move_downward,
                         't': self.model.test_tetramino,
                         ';': self.print_empty_line}
 
