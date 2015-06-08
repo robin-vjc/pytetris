@@ -37,7 +37,7 @@ class Model(object):
 
     def move_active_tetramino(self, position):
         """ move the active tetramino at the given position """
-        # check if wall collision, don't do anything if it fails
+        # check if wall collision is OK, don't do anything if it fails
         if self.check_wall_collision(position, self.active_tetramino):
             self.active_tetramino.position = position
             self.update_active_grid()
