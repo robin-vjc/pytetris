@@ -21,6 +21,7 @@ class Model(object):
     def add_tetramino(self, tetramino):
         self.tetraminos.append(tetramino)
         self.active_tetramino = tetramino
+        # insert tetramino in the active grid at the initiation position
         self.move_active_tetramino(tetramino.position)
 
     def move_active_tetramino(self, position):

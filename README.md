@@ -1,2 +1,2 @@
 # pytetris
-Python implementation of the Tetris game
+Python implementation of the Tetriss game
