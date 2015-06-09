@@ -39,6 +39,13 @@ class Tetramino(object):
         self.piece_grid = self.orientations_grid[self.orientation,:,:]
         return self
 
+    def rotate_left(self):
+        self.orientation -= 1
+        if self.orientation < 0:
+            self.orientation = self.PIECE_ORIENTATIONS-1
+        self.piece_grid = self.orientations_grid[self.orientation,:,:]
+        return self
+
 class I_Tetramino(Tetramino):
     """ Implementation of the I Tetramino
     orientation: 0 = horizontal, 1 = vertical """

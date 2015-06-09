@@ -28,8 +28,8 @@ class Model(object):
         """ returns True if given position is within walls (OK), False otherwise """
         blocks_row, blocks_col = np.where(tetramino.piece_grid != '.')
         if (position.col+blocks_col.min() >= 0) \
-                and (position.col+blocks_col.max() <= self.gridColumns) \
-                and (position.row+blocks_row.max() <= self.gridRows):
+                and (position.col+blocks_col.max() <= self.gridColumns-1) \
+                and (position.row+blocks_row.max() <= self.gridRows-1):
             return True
         else:
             return False
@@ -44,13 +44,14 @@ class Model(object):
             pass
 
     def update_active_grid(self):
-        t_rows = self.active_tetramino.piece_grid.shape[0]
-        t_cols = self.active_tetramino.piece_grid.shape[1]
+        piece_grid = self.active_tetramino.piece_grid
         position = self.active_tetramino.position
         # clear active grid first, then replace
         self.active_grid[:,:] = '.'
-        self.active_grid[position.row:position.row+t_rows, position.col:position.col+t_cols]\
-                = np.char.capitalize(self.active_tetramino.piece_grid)
+        for i, entry in enumerate(np.where(piece_grid != '.')[0]):
+            r = np.where(piece_grid != '.')[0][i] # row of non-empty entry
+            c = np.where(piece_grid != '.')[1][i] # col of non-empty entry
+            self.active_grid[position.row+r, position.col+c] = np.char.capitalize(piece_grid[r,c])
 
     def move_left(self):
         """ move active tetramino one step to the left """
@@ -71,10 +72,15 @@ class Model(object):
         self.move_active_tetramino(new_position)
 
     def rotate_right(self):
-        # here it should be checked whether the rotation is OK
-        # if it is OK rotate
-        # otherwise pass
+        # TODO here it should be checked whether the rotation is OK
+        # if it is OK rotate otherwise pass
         self.active_tetramino.rotate_right()
+        self.update_active_grid()
+
+    def rotate_left(self):
+        # TODO here it should be checked whether the rotation is OK
+        # if it is OK rotate otherwise pass
+        self.active_tetramino.rotate_left()
         self.update_active_grid()
 
     def test_tetramino(self):
@@ -163,6 +169,7 @@ class Controller(object):
                         'T': self.model.add_tetramino,
                         'Z': self.model.add_tetramino,
                         ')': self.model.rotate_right,
+                        '(': self.model.rotate_left,
                         '<': self.model.move_left,
                         '>': self.model.move_right,
                         'v': self.model.move_downward,
