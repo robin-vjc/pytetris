@@ -143,7 +143,6 @@ class Controller(object):
     def print_empty_line(self):
         print ''
 
-
     def __init__(self, model, viewer):
         self.model = model
         self.viewer = viewer
