@@ -1,4 +1,3 @@
-from cvxpy.atoms.elementwise.pos import pos
 from Tetramino import *
 
 Position = namedtuple('Position', ['row','col'])

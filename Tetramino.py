@@ -20,12 +20,14 @@ class Tetramino(object):
         self.orientations_grid[:,:,:] = '.'
         self.piece_grid = self.orientations_grid[0,:,:]
 
-    def display_piece_grid(self):
+    def __str__(self):
+        output = ''
         for row in range(self.PIECE_GRID_ROWS):
-            print ' '.join(self.piece_grid[row])
+            output = '{0}{1}\n'.format(output, ' '.join(self.piece_grid[row]))
+        return output.rstrip()
 
     def test_tetramino(self):
-        self.display_piece_grid()
+        print self
 
     # rotate method is in Tetramino, NOT in model, because it modifies
     # the Tetramino itself (and not the main grid)
