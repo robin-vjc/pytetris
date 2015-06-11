@@ -71,6 +71,11 @@ class Model(object):
         new_position = self.active_tetramino.position._replace(row=old_row+1)
         self.move_active_tetramino(new_position)
 
+    def move_downward_deep(self):
+        blocks_row, blocks_col = np.where(self.active_tetramino.piece_grid != '.')
+        new_position = self.active_tetramino.position._replace(row=self.gridRows-blocks_row.max()-1)
+        self.move_active_tetramino(new_position)
+
     def rotate_right(self):
         # TODO here it should be checked whether the rotation is OK
         # if it is OK rotate otherwise pass
@@ -173,6 +178,7 @@ class Controller(object):
                         '<': self.model.move_left,
                         '>': self.model.move_right,
                         'v': self.model.move_downward,
+                        'V': self.model.move_downward_deep,
                         't': self.model.test_tetramino,
                         ';': self.print_empty_line}
 
