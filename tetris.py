@@ -26,6 +26,7 @@ class Model(object):
         # insert tetramino in the active grid at the initiation position
         self.move_active_tetramino(tetramino.position)
 
+
     def check_wall_collision(self, position, tetramino):
         """ returns True if given position is within walls (OK), False otherwise """
         blocks_row, blocks_col = np.where(tetramino.piece_grid != '.')
@@ -47,13 +48,26 @@ class Model(object):
         return all(self.grid[blocks_row,blocks_col]=='.')
 
     def move_active_tetramino(self, position):
-        """ move the active tetramino at the given position """
-        # check if wall/unit collision is OK, return false if it fails
+        """ move the active tetramino at the given position
+        :param position: tentative new position for the tetramino
+        :return: True if movement was successful, False otherwise
+        """
+        # if wall/unit collision is OK, return false if it fails
         if self.check_wall_collision(position, self.active_tetramino) and \
                 self.check_unit_collision(position, self.active_tetramino):
             self.active_tetramino.position = position
             self.update_active_grid()
             return True
+        # couldn't move? was it trying to move downwards?
+        elif position.row > self.active_tetramino.position.row:
+            # stuck in the first two rows? -> game over!
+            if self.active_tetramino.position.row < 2:
+                self.settle_active_tetramino()
+                self.game_mode = 'game over'
+            # otherwise settle it
+            #else:
+            #    self.settle_active_tetramino()
+            return False
         else:
             return False
 
@@ -91,7 +105,6 @@ class Model(object):
         while self.move_active_tetramino(position):
             self.move_active_tetramino(position)
             position = position._replace(row=position.row+1)
-        # tetramino at the bottom can't go anywhere; we settle it
         self.settle_active_tetramino()
 
     def rotate_right(self):
@@ -121,7 +134,7 @@ class Model(object):
         # clear active grid
         self.active_grid[:,:] = '.'
         # clear active tetramino
-        self.active_tetramino = 0
+        # self.active_tetramino = 0
 
     def set_mode(self, setting='!'):
         """ sets the current view to either menu or game board
@@ -166,6 +179,9 @@ class Viewer(object):
         elif self.model.game_mode == 'pause':
             print 'Paused'
             print 'Press start button to continue.'
+        elif self.model.game_mode == 'game over':
+            self.display_active_grid()
+            print 'Game Over'
         else:
             pass
 
@@ -179,6 +195,9 @@ class Viewer(object):
             self.model.active_grid[act_blocks_row,act_blocks_col]
         for row in range(self.model.GRID_ROWS):
             print ' '.join(merged_grid[row])
+
+        if self.model.game_mode == 'game over':
+            print 'Game Over'
 
     def display_score(self):
         print self.model.score
