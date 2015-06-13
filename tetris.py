@@ -1,4 +1,5 @@
 from Tetramino import *
+import copy
 
 Position = namedtuple('Position', ['row','col'])
 
@@ -34,14 +35,26 @@ class Model(object):
         else:
             return False
 
+    def check_unit_collision(self, position, tetramino):
+        """ returns True is position does NOT collide with settled units """
+        # local position of the filled blocks
+        blocks_row, blocks_col = np.where(tetramino.piece_grid != '.')
+        # global position of the blocks in the grid
+        blocks_row = [x+position.row for x in blocks_row]
+        blocks_col = [x+position.col for x in blocks_col]
+
+        return all(self.grid[blocks_row,blocks_col]=='.')
+
     def move_active_tetramino(self, position):
         """ move the active tetramino at the given position """
-        # check if wall collision is OK, don't do anything if it fails
-        if self.check_wall_collision(position, self.active_tetramino):
+        # check if wall/unit collision is OK, return false if it fails
+        if self.check_wall_collision(position, self.active_tetramino) and \
+                self.check_unit_collision(position, self.active_tetramino):
             self.active_tetramino.position = position
             self.update_active_grid()
+            return True
         else:
-            pass
+            return False
 
     def update_active_grid(self):
         piece_grid = self.active_tetramino.piece_grid
@@ -72,9 +85,13 @@ class Model(object):
         self.move_active_tetramino(new_position)
 
     def move_downward_deep(self):
-        blocks_row, blocks_col = np.where(self.active_tetramino.piece_grid != '.')
-        new_position = self.active_tetramino.position._replace(row=self.gridRows-blocks_row.max()-1)
-        self.move_active_tetramino(new_position)
+        """ move tetramino at the bottom """
+        position = self.active_tetramino.position
+        while self.move_active_tetramino(position):
+            self.move_active_tetramino(position)
+            position = position._replace(row=position.row+1)
+        # tetramino at the bottom can't go anywhere; we settle it
+        self.settle_active_tetramino()
 
     def rotate_right(self):
         # TODO here it should be checked whether the rotation is OK
@@ -90,6 +107,20 @@ class Model(object):
 
     def test_tetramino(self):
         self.active_tetramino.test_tetramino()
+
+    def settle_active_tetramino(self):
+        """ pushes active tetramino into the settle grid model.grid """
+        piece_grid = self.active_tetramino.piece_grid
+        position = self.active_tetramino.position
+        # push tetramino into settled grid
+        for i, entry in enumerate(np.where(piece_grid != '.')[0]):
+            r = np.where(piece_grid != '.')[0][i] # row of non-empty entry
+            c = np.where(piece_grid != '.')[1][i] # col of non-empty entry
+            self.grid[position.row+r, position.col+c] = piece_grid[r,c]
+        # clear active grid
+        self.active_grid[:,:] = '.'
+        # clear active tetramino
+        self.active_tetramino = 0
 
     def add_observer(self, observer):
         if observer not in self._observers:
@@ -111,14 +142,27 @@ class Viewer(object):
     def __init__(self, model):
         self.model = model
         self.model.add_observer(self)
+        self.current_view = '!'  # '!' is game board, '@' is menu
 
-    def display_grid(self):
-        for row in range(self.model.gridRows):
-            print ' '.join(self.model.grid[row])
+    def display_status(self):
+        if self.current_view == '!':
+            self.display_active_grid()
+        elif self.current_view == '@':
+            print 'Learntris (c) 1992 Tetraminex, Inc.'
+            print 'Press start button to begin.'
+        else:
+            pass
 
     def display_active_grid(self):
+        """ displays active piece, AND settled pieces """
+        # merge settled grid
+        merged_grid = copy.deepcopy(self.model.grid)
+        # with the active piece grid
+        act_blocks_row, act_blocks_col = np.where(self.model.active_grid!='.')
+        merged_grid[act_blocks_row,act_blocks_col] = \
+            self.model.active_grid[act_blocks_row,act_blocks_col]
         for row in range(self.model.gridRows):
-            print ' '.join(self.model.active_grid[row])
+            print ' '.join(merged_grid[row])
 
     def display_score(self):
         print self.model.score
@@ -126,9 +170,17 @@ class Viewer(object):
     def display_cleared_lines(self):
         print self.model.cleared_lines
 
+    def set_view(self, setting='!'):
+        """ sets the current view to either menu or game board
+        :param setting: '!' sets game mode, '@' sets menu
+        :return: None
+        """
+        self.current_view = setting
+
     def update(self, model):
         "what to do when model is updated"
-        self.display_grid()
+        self.display_active_grid()
+
 
 class Controller(object):
 
@@ -159,7 +211,9 @@ class Controller(object):
         self.viewer = viewer
 
         self.options = {'q': quit,
-                        'p': self.viewer.display_grid,
+                        '@': self.viewer.set_view,
+                        '!': self.viewer.set_view,
+                        'p': self.viewer.display_status,
                         'P': self.viewer.display_active_grid,
                         'g': self.given_grid,
                         'c': self.clear_grid,
@@ -197,6 +251,10 @@ class Controller(object):
             self.options[keystroke](Z_Tetramino())
         elif keystroke == 'S':
             self.options[keystroke](S_Tetramino())
+        elif keystroke == '@':
+            self.options[keystroke]('@')
+        elif keystroke == '!':
+            self.options[keystroke]('!')
         else:
             self.options[keystroke]()
 
