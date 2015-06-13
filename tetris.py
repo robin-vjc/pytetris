@@ -5,19 +5,20 @@ Position = namedtuple('Position', ['row','col'])
 
 class Model(object):
     "model stores grid state, pieces and their position"
-    gridRows = 22
-    gridColumns = 10
+    GRID_ROWS = 22
+    GRID_COLS = 10
 
     def __init__(self):
-        self.grid = np.empty((self.gridRows, self.gridColumns), dtype=str)
+        self.grid = np.empty((self.GRID_ROWS, self.GRID_COLS), dtype=str)
         self.grid[:,:] = '.'
-        self.active_grid = np.empty((self.gridRows, self.gridColumns), dtype=str)
+        self.active_grid = np.empty((self.GRID_ROWS, self.GRID_COLS), dtype=str)
         self.active_grid[:,:] = '.'
         self.tetraminos = []
         self.active_tetramino = Tetramino()
         self.score = 0
         self.cleared_lines = 0
         self._observers = []
+        self.game_mode = 'board'  # can be board, menu, pause
 
     def add_tetramino(self, tetramino):
         self.tetraminos.append(tetramino)
@@ -29,8 +30,8 @@ class Model(object):
         """ returns True if given position is within walls (OK), False otherwise """
         blocks_row, blocks_col = np.where(tetramino.piece_grid != '.')
         if (position.col+blocks_col.min() >= 0) \
-                and (position.col+blocks_col.max() <= self.gridColumns-1) \
-                and (position.row+blocks_row.max() <= self.gridRows-1):
+                and (position.col+blocks_col.max() <= self.GRID_COLS-1) \
+                and (position.row+blocks_row.max() <= self.GRID_ROWS-1):
             return True
         else:
             return False
@@ -79,7 +80,7 @@ class Model(object):
         self.move_active_tetramino(new_position)
 
     def move_downward(self):
-        """ move active tetramino one step to the right """
+        """ move active tetramino one step downward """
         old_row = self.active_tetramino.position.row
         new_position = self.active_tetramino.position._replace(row=old_row+1)
         self.move_active_tetramino(new_position)
@@ -122,6 +123,19 @@ class Model(object):
         # clear active tetramino
         self.active_tetramino = 0
 
+    def set_mode(self, setting='!'):
+        """ sets the current view to either menu or game board
+        :param setting: '!' sets game mode, '@' sets menu
+        :return: None
+        """
+        # if game mode is in board, '!' pauses
+        if (setting == '!') and (self.game_mode == 'board'):
+            self.game_mode = 'pause'
+        elif setting == '!':
+            self.game_mode = 'board'
+        elif setting == '@':
+            self.game_mode = 'menu'
+
     def add_observer(self, observer):
         if observer not in self._observers:
             self._observers.append(observer)
@@ -142,14 +156,16 @@ class Viewer(object):
     def __init__(self, model):
         self.model = model
         self.model.add_observer(self)
-        self.current_view = '!'  # '!' is game board, '@' is menu
 
     def display_status(self):
-        if self.current_view == '!':
+        if self.model.game_mode == 'board':
             self.display_active_grid()
-        elif self.current_view == '@':
+        elif self.model.game_mode == 'menu':
             print 'Learntris (c) 1992 Tetraminex, Inc.'
             print 'Press start button to begin.'
+        elif self.model.game_mode == 'pause':
+            print 'Paused'
+            print 'Press start button to continue.'
         else:
             pass
 
@@ -161,7 +177,7 @@ class Viewer(object):
         act_blocks_row, act_blocks_col = np.where(self.model.active_grid!='.')
         merged_grid[act_blocks_row,act_blocks_col] = \
             self.model.active_grid[act_blocks_row,act_blocks_col]
-        for row in range(self.model.gridRows):
+        for row in range(self.model.GRID_ROWS):
             print ' '.join(merged_grid[row])
 
     def display_score(self):
@@ -169,13 +185,6 @@ class Viewer(object):
 
     def display_cleared_lines(self):
         print self.model.cleared_lines
-
-    def set_view(self, setting='!'):
-        """ sets the current view to either menu or game board
-        :param setting: '!' sets game mode, '@' sets menu
-        :return: None
-        """
-        self.current_view = setting
 
     def update(self, model):
         "what to do when model is updated"
@@ -186,20 +195,20 @@ class Controller(object):
 
     def given_grid(self):
         temp_grid = self.model.grid
-        for i in range(self.model.gridRows):
+        for i in range(self.model.GRID_ROWS):
             input_row = raw_input('')
             temp_grid[i][:] = input_row.split(' ')
         self.model.grid = temp_grid
 
     def clear_grid(self):
-        self.model.grid = np.empty((self.model.gridRows, self.model.gridColumns), dtype=str)
+        self.model.grid = np.empty((self.model.GRID_ROWS, self.model.GRID_COLS), dtype=str)
         self.model.grid[:,:] = '.'
 
     def step(self):
         # if row is complete, erase it
         for i, row in enumerate(self.model.grid):
             if '.' not in row:
-                self.model.grid[i][:] = ['.']*self.model.gridColumns
+                self.model.grid[i][:] = ['.']*self.model.GRID_COLS
                 self.model.cleared_lines += 1
                 self.model.score += 100
 
@@ -211,8 +220,8 @@ class Controller(object):
         self.viewer = viewer
 
         self.options = {'q': quit,
-                        '@': self.viewer.set_view,
-                        '!': self.viewer.set_view,
+                        '@': self.model.set_mode,
+                        '!': self.model.set_mode,
                         'p': self.viewer.display_status,
                         'P': self.viewer.display_active_grid,
                         'g': self.given_grid,
