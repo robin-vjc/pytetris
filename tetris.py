@@ -21,6 +21,10 @@ class Model(object):
         self.game_mode = 'board'  # can be board, menu, pause
 
     def add_tetramino(self, tetramino):
+        """ appends input Tetramino to model, and adds it to the model.active_grid
+        :param tetramino: Tetramino to be added
+        :return: None
+        """
         self.tetraminos.append(tetramino)
         self.active_tetramino = tetramino
         # insert tetramino in the active grid at the initiation position
@@ -28,7 +32,11 @@ class Model(object):
 
 
     def check_wall_collision(self, position, tetramino):
-        """ returns True if given position is within walls (OK), False otherwise """
+        """ check for wall collision
+        :param position: tenative position of the tetramino
+        :param tetramino: tetramino to be checked
+        :return: True if position is within walls, False otherwise
+        """
         blocks_row, blocks_col = np.where(tetramino.piece_grid != '.')
         if (position.col+blocks_col.min() >= 0) \
                 and (position.col+blocks_col.max() <= self.GRID_COLS-1) \
@@ -38,7 +46,11 @@ class Model(object):
             return False
 
     def check_unit_collision(self, position, tetramino):
-        """ returns True is position does NOT collide with settled units """
+        """ check for unit collision
+        :param position: tenative position of the tetramino
+        :param tetramino: tetramino to be checked
+        :return: True if position does NOT collide with settled units, False otherwise
+        """
         # local position of the filled blocks
         blocks_row, blocks_col = np.where(tetramino.piece_grid != '.')
         # global position of the blocks in the grid
@@ -65,6 +77,7 @@ class Model(object):
                 self.settle_active_tetramino()
                 self.game_mode = 'game over'
             # otherwise settle it
+            # TODO uncomment
             #else:
             #    self.settle_active_tetramino()
             return False
@@ -133,8 +146,6 @@ class Model(object):
             self.grid[position.row+r, position.col+c] = piece_grid[r,c]
         # clear active grid
         self.active_grid[:,:] = '.'
-        # clear active tetramino
-        # self.active_tetramino = 0
 
     def set_mode(self, setting='!'):
         """ sets the current view to either menu or game board
