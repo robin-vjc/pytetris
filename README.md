@@ -2,13 +2,13 @@
 Python implementation of the Tetriss game, following the challenge @ [GitHub](https://github.com/LearnProgramming/learntris).
 
 ### Running the game
-To start the game, simply run *gui.py*
+To start the game, simply run **gui.py**.
 
 <img align="middle" src="./images/screenshot.png" alt="Screenshot">
 
 ### Console
 
-It is also possible to run *tetris.py* from console, and control it using the following commands:
+It is also possible to run **tetris.py** from console, and control it using the following commands:
 * 'q': quits the game
 * '@': sets the game at the menu
 * '!': starts/pauses the game
