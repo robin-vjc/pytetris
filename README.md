@@ -7,7 +7,7 @@ Python implementation of the Tetriss game, following the challenge @ [GitHub](ht
   <img />
 </p>
 
-<img align="center" src="./images/screenshot.png">
+<img align="middle" src="./images/screenshot.png" alt="Screenshot">
 
 ![Screenshot](./images/screenshot.png "Screenshot og the game")
 
