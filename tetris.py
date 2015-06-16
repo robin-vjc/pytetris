@@ -77,9 +77,9 @@ class Model(object):
                 self.settle_active_tetramino()
                 self.game_mode = 'game over'
             # otherwise settle it
-            # TODO uncomment
-            #else:
-            #    self.settle_active_tetramino()
+            # TODO leave uncommented..?
+            else:
+                self.settle_active_tetramino()
             return False
         else:
             return False
@@ -93,6 +93,24 @@ class Model(object):
             r = np.where(piece_grid != '.')[0][i] # row of non-empty entry
             c = np.where(piece_grid != '.')[1][i] # col of non-empty entry
             self.active_grid[position.row+r, position.col+c] = np.char.capitalize(piece_grid[r,c])
+
+    def step(self):
+        # if row is complete, erase it
+        for i, row in enumerate(self.grid):
+            if '.' not in row:
+                # erase row
+                self.grid[i][:] = ['.']*self.GRID_COLS
+                # move existing grid above cancelled row one step down
+                temp_grid = np.empty((self.GRID_ROWS,self.GRID_COLS), dtype=str)
+                temp_grid[:,:] = '.'
+                for i_temp, row_temp in enumerate(temp_grid):
+                    if i_temp <= i and i_temp >= 1:
+                        temp_grid[i_temp][:] = self.grid[i_temp-1][:]
+                    else:
+                        temp_grid[i_temp][:] = self.grid[i_temp][:]
+                self.grid = temp_grid
+                self.cleared_lines += 1
+                self.score += 100
 
     def move_left(self):
         """ move active tetramino one step to the left """
@@ -234,13 +252,7 @@ class Controller(object):
         self.model.grid = np.empty((self.model.GRID_ROWS, self.model.GRID_COLS), dtype=str)
         self.model.grid[:,:] = '.'
 
-    def step(self):
-        # if row is complete, erase it
-        for i, row in enumerate(self.model.grid):
-            if '.' not in row:
-                self.model.grid[i][:] = ['.']*self.model.GRID_COLS
-                self.model.cleared_lines += 1
-                self.model.score += 100
+
 
     def print_empty_line(self):
         print ''
@@ -256,7 +268,7 @@ class Controller(object):
                         'P': self.viewer.display_active_grid,
                         'g': self.given_grid,
                         'c': self.clear_grid,
-                        's': self.step,
+                        's': self.model.step,
                         '?s': self.viewer.display_score,
                         '?n': self.viewer.display_cleared_lines,
                         'I': self.model.add_tetramino,
