@@ -139,16 +139,23 @@ class Model(object):
         self.settle_active_tetramino()
 
     def rotate_right(self):
-        # TODO here it should be checked whether the rotation is OK
-        # if it is OK rotate otherwise pass
-        self.active_tetramino.rotate_right()
-        self.update_active_grid()
+        # if it is OK rotate, rotate
+        test_tetramino = copy.deepcopy(self.active_tetramino)
+        test_tetramino.rotate_right()
+        if self.check_wall_collision(test_tetramino.position, test_tetramino) and \
+                self.check_unit_collision(test_tetramino.position, test_tetramino):
+            self.active_tetramino.rotate_right()
+            self.update_active_grid()
 
     def rotate_left(self):
-        # TODO here it should be checked whether the rotation is OK
-        # if it is OK rotate otherwise pass
-        self.active_tetramino.rotate_left()
-        self.update_active_grid()
+        # if it is OK rotate, rotate
+        test_tetramino = copy.deepcopy(self.active_tetramino)
+        test_tetramino.rotate_left()
+        if self.check_wall_collision(test_tetramino.position, test_tetramino) and \
+                self.check_unit_collision(test_tetramino.position, test_tetramino):
+            self.active_tetramino.rotate_left()
+            self.update_active_grid()
+        # otherwise pass
 
     def test_tetramino(self):
         self.active_tetramino.test_tetramino()
