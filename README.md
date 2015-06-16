@@ -1,5 +1,5 @@
 # pytetris
-Python implementation of the Tetriss game, following the challenge @ [https://github.com/LearnProgramming/learntris](GitHub)
+Python implementation of the Tetriss game, following the challenge @ [GitHub](https://github.com/LearnProgramming/learntris)
 
 To start the game, run gui.py.
 
@@ -30,9 +30,3 @@ It is also possible to run the tetris.py file from console, and control it using
 * 't': displayes local grid of the active tetramino
 * ';': prints an empty line
 This file will also pass all the tests of the challenge.
-
-To run it and pass all the tests, e.g. under Windows with Python 2.7:
-* fork the project
-* open cmd.exe and cd to the project directory
-* C:\[...]\pytetris>c:\Python27\python.exe testris.py c:\Python27\python.exe tetris.py
-
