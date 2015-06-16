@@ -1,11 +1,11 @@
 # pytetris
 Python implementation of the Tetriss game, following the challenge @ [GitHub](https://github.com/LearnProgramming/learntris).
 
-> To start the game, simply run ``gui.py''.
+` To start the game, simply run ``gui.py'' `
 
-![alt text](./images/screenshot.png "Screenshot og the game") | It is also possible to run the tetris.py file from console, and control it using the following commands:
-| * 'q': quits the game
-| * '@': sets the game at the menu
+It is also possible to run the tetris.py file from console, and control it using the following commands:
+* 'q': quits the game
+* '@': sets the game at the menu
 * '!': starts/pauses the game
 * 'p': prints the current status (menu, pause, or current grid depending on the status)
 * 'P': displays the grid with only the active piece
@@ -30,3 +30,5 @@ Python implementation of the Tetriss game, following the challenge @ [GitHub](ht
 * 't': displayes local grid of the active tetramino
 * ';': prints an empty line
 This file will also pass all the tests of the challenge.
+
+![Screenshot](./images/screenshot.png "Screenshot og the game")
