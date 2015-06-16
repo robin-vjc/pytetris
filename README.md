@@ -1,9 +1,9 @@
 # pytetris
 Python implementation of the Tetriss game, following the challenge @ [GitHub](https://github.com/LearnProgramming/learntris).
 
-` To start the game, simply run *gui.py* `
+` To start the game, simply run gui.py `
 
-![Screenshot](./images/screenshot.png "Screenshot og the game"){.center}
+![Screenshot](./images/screenshot.png "Screenshot og the game"){: .callout}
 
 It is also possible to run the tetris.py file from console, and control it using the following commands:
 * 'q': quits the game
@@ -34,5 +34,5 @@ It is also possible to run the tetris.py file from console, and control it using
 This file will also pass all the tests of the challenge.
 
 .center {
-  text-align: center;
+  float: center;
 }
