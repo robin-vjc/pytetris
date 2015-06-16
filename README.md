@@ -3,13 +3,7 @@ Python implementation of the Tetriss game, following the challenge @ [GitHub](ht
 
 ` To start the game, simply run gui.py `
 
-<p align="center">
-  <img />
-</p>
-
 <img align="middle" src="./images/screenshot.png" alt="Screenshot">
-
-![Screenshot](./images/screenshot.png "Screenshot og the game")
 
 It is also possible to run the tetris.py file from console, and control it using the following commands:
 * 'q': quits the game
