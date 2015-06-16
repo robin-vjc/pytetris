@@ -3,9 +3,9 @@ Python implementation of the Tetriss game, following the challenge @ [GitHub](ht
 
 ### Running the game
 To start the game, simply run **gui.py**.
-* movement arrows move the pieces left, right and downwards
-* 'a' and 'd' rotate the piece
-* 'x' moves the piece to the bottom
+* `movement arrows` move the pieces left, right and downwards
+* `a` and `d` rotate the piece
+* `x` moves the piece to the bottom
 
 <img align="middle" src="./images/screenshot.png" alt="Screenshot">
 
