@@ -7,7 +7,7 @@ To start the game, simply run **gui.py**.
 * `a` and `d` rotate the piece
 * `x` moves the piece to the bottom
 
-<img align="middle" src="./images/screenshot.png" alt="Screenshot">
+<img align="middle" src="./images/screenshot_2.png" alt="Screenshot">
 
 ### Console
 
