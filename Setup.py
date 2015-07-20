@@ -11,6 +11,7 @@ from collections import namedtuple
 model = Model()
 viewer = Viewer(model)
 controller = Controller(model, viewer)
+pygame.init()
 
 # Colors
 # ------
@@ -57,6 +58,7 @@ COLORCODE = {
 }
 
 screen = pygame.display.set_mode((WIDTH,HEIGHT))
+myfont = pygame.font.SysFont("monospace", 15)
 
 # Helper functions
 # ----------------
@@ -91,5 +93,11 @@ def draw_grid():
                 draw_block(Position(row,col), COLORCODE[model.grid[row,col]])
             if model.active_grid[row,col] != '.':
                 draw_block(Position(row,col), COLORCODE[model.active_grid[row,col]])
+    # draw score
+    draw_score(model.score)
     # refresh console, for debugging
     controller.exec_command('p')
+
+def draw_score(score):
+    text = myfont.render("Score: " +str(score), 1,(255,255,255))
+    screen.blit(text, (1, 1))
