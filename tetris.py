@@ -115,6 +115,7 @@ class Model(object):
                 self.grid = temp_grid
                 self.cleared_lines += 1
                 self.score += 100
+                self.update_level()
 
     def move_left(self):
         """ move active tetramino one step to the left """

@@ -21,7 +21,6 @@ while not model.game_mode == 'game over':
         # check if the active tetramino has settled, create a new one (random)
         if np.all(model.active_grid == '.'):
             controller.exec_command(random.choice(TETRAMINOS))
-        model.update_level()
         draw_grid()
         t_1 = 0
     t_1 += 1
@@ -66,3 +65,10 @@ while not model.game_mode == 'game over':
 
     pygame.display.update()
 
+# Game Over! Wait for user to quit.
+draw_score(0,0)
+while True:
+    clock.tick(RATE)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            sys.exit()

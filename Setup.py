@@ -38,7 +38,6 @@ HEIGHT = int((model.GRID_ROWS+2)*DX)
 # refresh rate
 RATE = 30
 
-
 TETRAMINOS = ('I','J','L','O','T','Z','S')
 COLORCODE = {
     'c': CYAN,
@@ -100,6 +99,9 @@ def draw_grid():
     controller.exec_command('p')
 
 def draw_score(score, level):
-    text = myfont.render("".join(["Score: ", str(score), " Level: ", str(level)]),
-                         1, (255,255,255))
+    if model.game_mode == 'game over':
+        text = myfont.render("Game Over!", 1, (255,255,255))
+    else:
+        text = myfont.render("".join(["Score: ", str(score), " Level: ", str(level)]),
+                            1, (255,255,255))
     screen.blit(text, (1, 1))
