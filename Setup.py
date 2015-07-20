@@ -38,6 +38,7 @@ HEIGHT = int((model.GRID_ROWS+2)*DX)
 # refresh rate
 RATE = 30
 
+
 TETRAMINOS = ('I','J','L','O','T','Z','S')
 COLORCODE = {
     'c': CYAN,
@@ -94,10 +95,11 @@ def draw_grid():
             if model.active_grid[row,col] != '.':
                 draw_block(Position(row,col), COLORCODE[model.active_grid[row,col]])
     # draw score
-    draw_score(model.score)
+    draw_score(model.score, model.level)
     # refresh console, for debugging
     controller.exec_command('p')
 
-def draw_score(score):
-    text = myfont.render("Score: " +str(score), 1,(255,255,255))
+def draw_score(score, level):
+    text = myfont.render("".join(["Score: ", str(score), " Level: ", str(level)]),
+                         1, (255,255,255))
     screen.blit(text, (1, 1))

@@ -13,7 +13,7 @@ t_2 = 1
 # Start the game with a random tetramino
 controller.exec_command(random.choice(TETRAMINOS))
 
-while True:
+while not model.game_mode == 'game over':
     clock.tick(RATE)
 
     # commands to be executed every 1 sec
@@ -21,11 +21,19 @@ while True:
         # check if the active tetramino has settled, create a new one (random)
         if np.all(model.active_grid == '.'):
             controller.exec_command(random.choice(TETRAMINOS))
-        controller.exec_command('s')  # check for lines to be cleared
-        controller.exec_command('v')  # move down active tetramino one step
+        model.update_level()
         draw_grid()
         t_1 = 0
     t_1 += 1
+
+    # commands to be executed at the pace set by the level; every level, game
+    # is one RATE faster
+    if not t_2 % (max(RATE - model.level,1)):
+        controller.exec_command('v')  # move down active tetramino one step
+        controller.exec_command('s')  # check for lines to be cleared
+        draw_grid()
+        t_2 = 0
+    t_2 += 1
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -57,3 +65,4 @@ while True:
                 sys.exit()
 
     pygame.display.update()
+

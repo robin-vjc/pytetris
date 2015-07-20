@@ -7,6 +7,9 @@ class Model(object):
     "model stores grid state, pieces and their position"
     GRID_ROWS = 22
     GRID_COLS = 10
+    # level up settings
+    LEVEL_UP = 1000  # level goes up every 1000 score
+    MAX_LEVEL = 29
 
     def __init__(self):
         self.grid = np.empty((self.GRID_ROWS, self.GRID_COLS), dtype=str)
@@ -17,6 +20,7 @@ class Model(object):
         self.active_tetramino = Tetramino()
         self.score = 0
         self.cleared_lines = 0
+        self.level = 0
         self._observers = []
         self.game_mode = 'board'  # can be board, menu, pause
 
@@ -184,6 +188,10 @@ class Model(object):
             self.game_mode = 'board'
         elif setting == '@':
             self.game_mode = 'menu'
+
+    def update_level(self):
+        # increase level every +model.LEVEL_UP score; max level is model.MAX_LEVEL
+        self.level = min(int(self.score/self.LEVEL_UP), self.MAX_LEVEL)
 
     def add_observer(self, observer):
         if observer not in self._observers:
